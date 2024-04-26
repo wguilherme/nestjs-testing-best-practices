@@ -6,6 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(RabbitmqModule);
 
   app.connectMicroservice({
+    name: 'output',
     transport: Transport.RMQ,
     options: {
       urls: ['amqp://guest:guest@localhost:5672'],

@@ -7,8 +7,13 @@ export class RabbitmqController {
   constructor(private readonly rabbitmqService: RabbitmqService) {}
 
   @MessagePattern()
-  receive(): void {
-    this.rabbitmqService.processEvent();
+  receive(): string {
+    return this.rabbitmqService.processEvent();
+  }
+
+  @MessagePattern('output')
+  receive2(): string {
+    return this.rabbitmqService.processEvent();
   }
 
   @Get()

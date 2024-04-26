@@ -1,22 +1,35 @@
+import { INestApplication } from '@nestjs/common';
+import { ClientProxy, ClientsModule, Transport } from '@nestjs/microservices';
 import { Test, TestingModule } from '@nestjs/testing';
-import { RabbitmqController } from './rabbitmq.controller';
+
+import { RabbitmqModule } from './rabbitmq.module';
 import { RabbitmqService } from './rabbitmq.service';
 
-describe('RabbitmqController', () => {
-  let rabbitmqController: RabbitmqController;
-
-  beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      controllers: [RabbitmqController],
-      providers: [RabbitmqService],
+describe('RabbitMQService Controller (e2e)', () => {
+  it('Should receive a heartbat message', async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        RabbitmqModule,
+        ClientsModule.register([{ name: 'output', transport: Transport.RMQ }]),
+      ],
     }).compile();
 
-    rabbitmqController = app.get<RabbitmqController>(RabbitmqController);
-  });
+    const app: INestApplication = moduleFixture.createNestApplication();
+    app.connectMicroservice({ transport: Transport.RMQ });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(rabbitmqController.getHello()).toBe('Hello World!');
-    });
+    await app.startAllMicroservices();
+    app.init();
+
+    const client: ClientProxy = app.get<ClientProxy>('output');
+    await client.connect();
+
+    const payload = { data: 'output' };
+
+    const response = await client.send('output', payload).toPromise();
+
+    expect(response).toEqual('OK');
+
+    await app.close();
+    client.close();
   });
 });

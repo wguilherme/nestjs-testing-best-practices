@@ -5,7 +5,8 @@ export class RabbitmqService {
   getHello(): string {
     return 'Hello World!';
   }
-  processEvent(): void {
+  processEvent(): string {
     console.log('New event received!');
+    return 'OK';
   }
 }
