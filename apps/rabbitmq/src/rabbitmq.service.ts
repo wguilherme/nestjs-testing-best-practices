@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class RabbitmqService {
   processEvent(): string {
-    return 'New event received';
+    const response = 'New event received';
+    return response;
   }
 }
