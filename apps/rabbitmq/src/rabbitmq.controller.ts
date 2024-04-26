@@ -6,18 +6,13 @@ import { MessagePattern } from '@nestjs/microservices';
 export class RabbitmqController {
   constructor(private readonly rabbitmqService: RabbitmqService) {}
 
-  @MessagePattern()
-  receive(): string {
-    return this.rabbitmqService.processEvent();
-  }
-
   @MessagePattern('output')
   receive2(): string {
     return this.rabbitmqService.processEvent();
   }
 
   @Get()
-  getHello(): string {
-    return this.rabbitmqService.getHello();
+  healthCheck(): string {
+    return 'OK';
   }
 }

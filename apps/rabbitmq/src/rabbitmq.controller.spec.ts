@@ -3,7 +3,6 @@ import { ClientProxy, ClientsModule, Transport } from '@nestjs/microservices';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { RabbitmqModule } from './rabbitmq.module';
-import { RabbitmqService } from './rabbitmq.service';
 
 describe('RabbitMQService Controller (e2e)', () => {
   it('Should receive a heartbat message', async () => {
@@ -27,7 +26,7 @@ describe('RabbitMQService Controller (e2e)', () => {
 
     const response = await client.send('output', payload).toPromise();
 
-    expect(response).toEqual('OK');
+    expect(response).toEqual('New event received');
 
     await app.close();
     client.close();
