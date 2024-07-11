@@ -1,11 +1,62 @@
 version: '3.7'
 
 services:
-  rabbitmq:
+  rabbitmq-node1:
     image: rabbitmq:3-management
+    hostname: rabbitmq-node1
+    container_name: rabbitmq-node1
     ports:
       - '5672:5672'
       - '15672:15672'
     environment:
       RABBITMQ_DEFAULT_USER: 'guest'
       RABBITMQ_DEFAULT_PASS: 'guest'
+      RABBITMQ_ERLANG_COOKIE: 'secret_cookie'
+    volumes:
+      - rabbitmq-node1-data:/var/lib/rabbitmq
+    networks:
+      - rabbitmq_cluster
+
+  rabbitmq-node2:
+    image: rabbitmq:3-management
+    hostname: rabbitmq-node2
+    container_name: rabbitmq-node2
+    ports:
+      - '5673:5672'
+    environment:
+      RABBITMQ_DEFAULT_USER: 'guest'
+      RABBITMQ_DEFAULT_PASS: 'guest'
+      RABBITMQ_ERLANG_COOKIE: 'secret_cookie'
+      RABBITMQ_NODENAME: rabbit@rabbitmq-node2
+    volumes:
+      - rabbitmq-node2-data:/var/lib/rabbitmq
+    depends_on:
+      - rabbitmq-node1
+    networks:
+      - rabbitmq_cluster
+
+  rabbitmq-node3:
+    image: rabbitmq:3-management
+    hostname: rabbitmq-node3
+    container_name: rabbitmq-node3
+    ports:
+      - '5674:5672'
+    environment:
+      RABBITMQ_DEFAULT_USER: 'guest'
+      RABBITMQ_DEFAULT_PASS: 'guest'
+      RABBITMQ_ERLANG_COOKIE: 'secret_cookie'
+      RABBITMQ_NODENAME: rabbit@rabbitmq-node3
+    volumes:
+      - rabbitmq-node3-data:/var/lib/rabbitmq
+    depends_on:
+      - rabbitmq-node1
+    networks:
+      - rabbitmq_cluster
+
+volumes:
+  rabbitmq-node1-data:
+  rabbitmq-node2-data:
+  rabbitmq-node3-data:
+
+networks:
+  rabbitmq_cluster:

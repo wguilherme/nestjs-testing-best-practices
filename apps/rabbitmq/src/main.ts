@@ -13,6 +13,9 @@ async function bootstrap() {
       queue: 'output',
       queueOptions: {
         durable: true,
+        arguments: {
+          'x-queue-type': 'quorum',
+        },
       },
     },
   });
